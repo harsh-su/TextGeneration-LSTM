@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next Word Prediction</title>
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <style>
+        /* General body styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Container for content */
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        /* Heading styles */
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Label styles */
+        label {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* Input and button styles */
+        input[type="text"], input[type="range"], button {
+            font-size: 16px;
+            padding: 10px;
+            margin: 10px 0 20px 0;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Button styles */
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Range input label */
+        #lengthValue {
+            font-weight: bold;
+        }
+
+        /* Prediction result styles */
+        #predictionResult {
+            font-size: 18px;
+            color: #333;
+            font-weight: bold;
+            word-wrap: break-word;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Next Word Prediction</h1>
+
+        <label for="inputText">Enter a sentence:</label>
+        <input type="text" id="inputText" placeholder="Enter a sentence...">
+        
+        <label for="textLength">Select Length of Generated Text:</label>
+        <input type="range" id="textLength" min="5" max="50" value="10">
+        <span id="lengthValue">10</span> words
+
+        <button id="generateButton">Generate Text</button>
+
+        <h2>Generated Text:</h2>
+        <p id="predictionResult"></p>
+    </div>
+
+    <script>
+        document.getElementById("textLength").addEventListener("input", function() {
+            document.getElementById("lengthValue").textContent = this.value;
+        });
+
+        document.getElementById("generateButton").addEventListener("click", async function() {
+            const inputText = document.getElementById("inputText").value;
+            const length = document.getElementById("textLength").value;
+
+            const response = await fetch('/generate_text/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    input_text: inputText,
+                    length: parseInt(length),
+                }),
+            });
+
+            const data = await response.json();
+            document.getElementById("predictionResult").textContent = data.generated_text;
+        });
+    </script>
+</body>
+</html>
